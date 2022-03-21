@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What is my ip?</title>
+</head>
+<body>
+    <h3>Din IP är: <span id="ip"></span></h3>
+
+    <script>
+        const IP_URL = "https://cgi.arcada.fi/~welandfr/demo/wdbcms22-exempel/lektion-1/api/ip/";
+        
+        async function getIP() {
+            // Kalla på vår php-IP-API med fetch()
+            const resp = await fetch(IP_URL);
+            // Ta emot response och omvandla till json
+            const respBody = await resp.json();
+
+            document.querySelector("#ip").innerText = respBody.ip;
+        }
+        getIP(); // Glöm inte att anropa funktionen :)
+    </script>
+</body>
+</html>
