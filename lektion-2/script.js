@@ -20,7 +20,6 @@ function getjQuery(URL) {
  // $.get(URL, function(data) {
     $.get(URL, (data) => {
         document.querySelector("#ip-2").innerText = data.ip;
-        
     });
 }
 

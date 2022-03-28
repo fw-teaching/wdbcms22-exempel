@@ -1,0 +1,35 @@
+
+@baseUrl = https://fw-teaching.fi/demo/wdbocms/api/v1
+
+###
+GET {{baseUrl}}/products/
+
+###
+
+GET {{baseUrl}}/products/1002
+
+###
+POST {{baseUrl}}/products/
+Content-Type: application/json
+
+{
+    "name": "Belt",
+    "price": "45"
+}
+
+###
+PUT {{baseUrl}}/products/1003
+Content-Type: application/json
+
+{
+    "name": "Scarf",
+    "price": "15"
+}
+
+###
+PATCH {{baseUrl}}/products/1003
+Content-Type: application/json
+
+{
+    "price": "20"
+}
