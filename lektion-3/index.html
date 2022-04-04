@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lektion 3 - Methodtest</title>
+</head>
+<body>
+  <div id="buttons">
+    <button id="btn-get" type="button">Test GET</button>
+    <button id="btn-post" type="button">Test POST (hotel booking)</button>
+  </div>
+  <div id="output"></div>
+
+  <script>
+    
+    // Samlad event-listener
+    document.querySelector('#buttons').addEventListener('click', (evt) => {
+      console.log(evt);
+      const targetId = evt.target.getAttribute('id');
+
+      if (targetId == 'btn-get') {
+        testGet();
+      } else if (targetId == 'btn-post') {
+        testPost();
+      }
+    });
+
+    const URL = 'https://cgi.arcada.fi/~welandfr/demo/wdbcms22-exempel/api/methodtest/?key=abc123';
+    
+    async function testGet() {
+        const resp = await fetch(URL);
+        const data = await resp.json();
+
+        console.log(data);
+    }
+
+    async function testPost() {
+
+      const postData = {
+        firstname: "Jane",
+        lastname: "Doe",
+        room_number: "404"
+      }
+
+      // i JS kan man hämta värden ur objekt på två sätt, OBS i PHP är det olika
+      postData.firstname;
+      postData['firstname'];
+
+      const resp = await fetch(URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(postData)
+      });
+
+      const data = await resp.json();
+
+      document.querySelector('#output').innerText = data.status;
+      console.log(data);
+    }
+
+  </script>
+</body>
+</html>
