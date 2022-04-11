@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Booking</title>
+  <style>
+    #booking-app {
+      padding: 5px;
+      border: 1px solid black;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="booking-app">
+    <h2>Boka rum</h2>
+
+    <ul id="bookings">
+      <li>inga bokningar</li>
+    </ul>    
+
+    <hr>
+
+    <div>
+      Gäst: <select id="guest"></select>
+    </div>
+    
+    <div>
+    Rum: <select id="room">
+        <option value="10">101 Enkelrum</option>  
+        <option value="11">102 Enkelrum</option>  
+        <option value="12">808 Sviten</option>  
+      </select>
+    </div>
+
+    Info om bokningen:<br>
+    <textarea id="addinfo"></textarea>
+    <br>
+    <input type="button" value="Spara bokning">
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
