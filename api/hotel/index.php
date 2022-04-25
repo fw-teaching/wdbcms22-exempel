@@ -38,7 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
   
   // Hämta alla gäster
   $stmt = $pdo->prepare("SELECT 
-    *
+    *,
+    (SELECT 
+      count(*) FROM hotel_booking 
+      WHERE guest_id = hotel_guest.id) AS bookings_count
     FROM hotel_guest
     ORDER BY lastname
   ");
@@ -60,7 +63,42 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
   $stmt->execute();
   $response['bookings'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+} else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+  try {
+    $stmt = $pdo->prepare("INSERT INTO hotel_booking (
+      guest_id,
+      room_id,
+      addinfo,
+      dateto,
+      datefrom
+    ) VALUES (
+      :guest_id,
+      :room_id,
+      :addinfo,
+      now(),
+      now()
+    )");
+    $stmt->execute([
+      "guest_id" => $request_body->guest_id,
+      "room_id" => $request_body->room_id,
+      "addinfo" => strip_tags($request_body->addinfo)
+    ]);
+
+    $response = [
+      "msg" => "booking saved!",
+      "body" => $request_body
+    ];
+
+  } catch (Exception $e) {
+    $response = [ "error" => $e ];
+  }
+
+  
 }
+
+
+
 // Omvandla PHP-arrayen till JSON och skriv ut
 echo json_encode($response);
 
