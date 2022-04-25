@@ -1,6 +1,6 @@
 <?php
 
-$api_key = null; // Får sitt riktiga värde i hotel_config!
+
 require_once("../../../../../local/hotel_config.php");
 
 try {
@@ -36,7 +36,8 @@ $response = [
   "conf" => $db_conf["hello"]
 ];
 
-// Här kollar vi att alla requests som inte är GET har valid API_key!
+// Här kollar vi att alla requests som inte är GET har valid API_key, annars exit.
+// $api_key får sitt värde i hotel_config.php!
 if ($_SERVER['REQUEST_METHOD'] != "GET" 
     && (!isset($req_headers['x-api-key']) || $req_headers['x-api-key'] != $api_key)
   ) {
@@ -45,7 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] != "GET"
     exit();
 }
 
-
+/**
+ * GET: hämta gäster och bokningar
+ */
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
   
   // Hämta alla gäster
@@ -75,6 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
   $stmt->execute();
   $response['bookings'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+/**
+ * POST: skapa ny bokning
+ */
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   try {
@@ -88,8 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
       :guest_id,
       :room_id,
       :addinfo,
-      :datefrom,
-      :datefrom
+      :datefrom, -- För enkelhetens skull samma datum på båda
+      :datefrom  -- För enkelhetens skull samma datum på båda
     )");
     $stmt->execute([
       "guest_id" => $request_body->guest_id,
@@ -107,13 +113,15 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     $response = [ "error" => $e ];
   }
 
-  
+/**
+ * DELETE: radera bokning
+ */  
 } else if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
 
   try {
     $stmt = $pdo->prepare("DELETE FROM 
       hotel_booking 
-    WHERE id = :id");
+    WHERE id = :id"); // OBS: glöm aldrig WHERE i DELETE och UPDATE!!
     
     $stmt->execute(["id" => $request_vars['id']]);
     $response = [ "msg" => "DELETED booking " . $request_vars['id']];
@@ -122,7 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     $response = [ "error" => $e ];
   }
   
-
 }
 
 // Omvandla PHP-arrayen till JSON och skriv ut

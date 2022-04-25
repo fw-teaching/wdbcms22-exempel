@@ -2,7 +2,9 @@ console.log("works")
 
 const URL = "https://cgi.arcada.fi/~welandfr/demo/wdbcms22-exempel/api/hotel/";
 
-
+/**
+ * getHotel() hämtar gäster och bokningar
+ */
 async function getHotel() {
   const resp = await fetch(URL);
   const data = await resp.json();
@@ -37,6 +39,9 @@ async function getHotel() {
 }
 getHotel();
 
+/**
+ * saveBooking() gör POST-request för att spara ny bokning
+ */
 async function saveBooking() {
   const bookingData = {
     guest_id: document.querySelector('#guest').value,
@@ -59,6 +64,9 @@ async function saveBooking() {
   console.log(bookingData);
 }
 
+/**
+ * delBooking() gör DELETE-request för att radera bokning
+ */
 async function delBooking(booking_id) {
   if (confirm("vill du verkligen radera bokning " + booking_id)) {
 
@@ -72,7 +80,10 @@ async function delBooking(booking_id) {
   }
 }
 
+// Lyssna på save-knappen
 document.querySelector('#save-booking').addEventListener('click', saveBooking);
+
+// Lyssna på [Del]
 document.querySelector('#bookings').addEventListener('click', (event) => {
   
   if (event.target.getAttribute("data-del")) {
@@ -81,6 +92,7 @@ document.querySelector('#bookings').addEventListener('click', (event) => {
 
 });
 
+// Lyssna på Settings-länken
 document.querySelector('#settings').addEventListener('click', () => {
   const CURRENT_KEY = localStorage.getItem('hotel_api_key');
   localStorage.setItem('hotel_api_key', prompt("API-key:", CURRENT_KEY));
