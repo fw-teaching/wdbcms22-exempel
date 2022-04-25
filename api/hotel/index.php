@@ -1,8 +1,8 @@
 <?php
 
+$api_key = null; // Får sitt riktiga värde i hotel_config!
 require_once("../../../../../local/hotel_config.php");
 
-// LÄXA: Skapa pdo-connection till postgresql här!
 try {
   $conn_string = "pgsql:host=".$db_conf['host'].";port=5432;dbname=".$db_conf['dbname'];
   // pgsql:host=128.214.253.167;port=5432;dbname=woqkeycs
@@ -26,6 +26,8 @@ $request_json = file_get_contents('php://input');
 $request_body = json_decode($request_json); // ==> OBJEKT
 // Vi kan casta (byta datatyp) från objekt till array så här: 
 $request_body_arr = (array) $request_body;
+// Alla headers
+$req_headers = getallheaders();
 
 // Vår response först som en PHP-array
 $response = [
@@ -33,6 +35,16 @@ $response = [
   "guests" => [],
   "conf" => $db_conf["hello"]
 ];
+
+// Här kollar vi att alla requests som inte är GET har valid API_key!
+if ($_SERVER['REQUEST_METHOD'] != "GET" 
+    && (!isset($req_headers['x-api-key']) || $req_headers['x-api-key'] != $api_key)
+  ) {
+
+    echo json_encode(["msg" => "BAD KEY"]);
+    exit();
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
   
@@ -76,13 +88,14 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
       :guest_id,
       :room_id,
       :addinfo,
-      now(),
-      now()
+      :datefrom,
+      :datefrom
     )");
     $stmt->execute([
       "guest_id" => $request_body->guest_id,
       "room_id" => $request_body->room_id,
-      "addinfo" => strip_tags($request_body->addinfo)
+      "addinfo" => strip_tags($request_body->addinfo),
+      "datefrom" => $request_body->datefrom
     ]);
 
     $response = [
@@ -95,9 +108,22 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
   }
 
   
+} else if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
+
+  try {
+    $stmt = $pdo->prepare("DELETE FROM 
+      hotel_booking 
+    WHERE id = :id");
+    
+    $stmt->execute(["id" => $request_vars['id']]);
+    $response = [ "msg" => "DELETED booking " . $request_vars['id']];
+
+  } catch (Exception $e) {
+    $response = [ "error" => $e ];
+  }
+  
+
 }
-
-
 
 // Omvandla PHP-arrayen till JSON och skriv ut
 echo json_encode($response);

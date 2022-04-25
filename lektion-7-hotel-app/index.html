@@ -11,6 +11,10 @@
       border: 1px solid black;
       border-radius: 5px;
     }
+    .link {
+      color: blue;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -24,6 +28,9 @@
 
     <hr>
 
+    <div>
+      Datum: <input id="datefrom" type="date">
+    </div>
     <div>
       Gäst: <select id="guest"></select>
     </div>
@@ -40,6 +47,8 @@
     <textarea id="addinfo"></textarea>
     <br>
     <input type="button" id="save-booking" value="Spara bokning">
+
+    <p class="link" id="settings">Settings</p>
 
   </div>
 
