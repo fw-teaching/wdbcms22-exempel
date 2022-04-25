@@ -12,7 +12,7 @@ async function getHotel() {
   let guests_html = "";
   // for-of loopen loopar igenom alla element i en array
   for (guest of data.guests) {  
-    // backtick-syntax är praktiskt för konkatenering
+    // backtick-syntax är praktiskt för att bygga upp teckensträngar
     guests_html += `
       <option value="${guest.id}">
         ${guest.firstname} ${guest.lastname}
