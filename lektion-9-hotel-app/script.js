@@ -107,14 +107,11 @@ async function editBooking(booking_id) {
   const b = await resp.json();
   console.log(b);
   document.querySelector('#edit-title').innerText = 'UPPDATERA bokning ' + b.id;
-  document.querySelector('#booking-id').value = b.id;
+  document.querySelector('#booking-id').value = b.id; // dolda fältet!
   document.querySelector('#datefrom').value = b.datefrom;
   document.querySelector('#guest').value = b.guest_id;
   document.querySelector('#room').value = b.room_id;
   document.querySelector('#addinfo').value = b.addinfo;
-  
-  //document.querySelector('#booking-id').value = b.id;
-
 
 }
 
