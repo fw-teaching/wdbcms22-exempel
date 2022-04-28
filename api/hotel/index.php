@@ -1,6 +1,5 @@
 <?php
 
-
 require_once("../../../../../local/hotel_config.php");
 
 try {
@@ -45,11 +44,20 @@ if ($_SERVER['REQUEST_METHOD'] != "GET"
     echo json_encode(["msg" => "BAD KEY"]);
     exit();
 }
+/**
+ * GET specifik bokning
+ */
+if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($request_vars['id'])) {
+
+  //$response['msg'] = "UPDATE booking " . $request_vars['id'];
+  $stmt = $pdo->prepare("SELECT * FROM hotel_booking WHERE id = :id"); 
+  $stmt->execute(['id' => $request_vars['id']]);
+  $response = $stmt->fetch(PDO::FETCH_ASSOC);
 
 /**
  * GET: hämta gäster och bokningar
  */
-if ($_SERVER['REQUEST_METHOD'] == "GET") {
+} else if ($_SERVER['REQUEST_METHOD'] == "GET") {
   
   // Hämta alla gäster
   $stmt = $pdo->prepare("SELECT 
