@@ -46,7 +46,8 @@ getHotel();
 /**
  * saveBooking() gör POST-request för att spara ny bokning
  */
-async function saveBooking() {
+async function saveBooking(booking_id) {
+
   const bookingData = {
     guest_id: document.querySelector('#guest').value,
     room_id: document.querySelector('#room').value,
@@ -54,8 +55,16 @@ async function saveBooking() {
     datefrom: document.querySelector('#datefrom').value
   }
 
-  const resp = await fetch(API_URL, {
-    method: 'POST',
+  // Kolla om vi sparar ny eller uppdaterar gammal
+  let urlStr = API_URL;
+  let method = 'POST';
+  if (booking_id != 0) {
+    urlStr += "?id=" + booking_id;
+    method = 'PUT';
+  }
+
+  const resp = await fetch(urlStr, {
+    method: method,
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': localStorage.getItem('hotel_api_key')
@@ -64,8 +73,9 @@ async function saveBooking() {
   });
   const respData = await resp.json();
 
-  getHotel();
-  console.log(bookingData);
+  //getHotel();
+  console.log(respData);
+  location = './';
 }
 
 /**
@@ -109,7 +119,10 @@ async function editBooking(booking_id) {
 }
 
 // Lyssna på save-knappen
-document.querySelector('#save-booking').addEventListener('click', saveBooking);
+document.querySelector('#save-booking').addEventListener('click', () => {
+  // booking-id är 0 för nya, riktig id när vi uppdaterar
+  saveBooking(document.querySelector('#booking-id').value) 
+});
 
 // Lyssna på [Del]
 document.querySelector('#bookings').addEventListener('click', (event) => {

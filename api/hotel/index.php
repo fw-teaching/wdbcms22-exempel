@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($request_vars['id'])) {
 
   //$response['msg'] = "UPDATE booking " . $request_vars['id'];
   $stmt = $pdo->prepare("SELECT * FROM hotel_booking WHERE id = :id"); 
-  $stmt->execute(['id' => $request_vars['id']]);
+  $stmt->execute([':id' => $request_vars['id']]);
   $response = $stmt->fetch(PDO::FETCH_ASSOC);
 
 /**
@@ -106,10 +106,10 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($request_vars['id'])) {
       :datefrom  -- För enkelhetens skull samma datum på båda
     )");
     $stmt->execute([
-      "guest_id" => $request_body->guest_id,
-      "room_id" => $request_body->room_id,
-      "addinfo" => strip_tags($request_body->addinfo),
-      "datefrom" => $request_body->datefrom
+      ":guest_id" => $request_body->guest_id,
+      ":room_id" => $request_body->room_id,
+      ":addinfo" => strip_tags($request_body->addinfo),
+      ":datefrom" => $request_body->datefrom
     ]);
 
     $response = [
@@ -124,20 +124,47 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($request_vars['id'])) {
 /**
  * DELETE: radera bokning
  */  
-} else if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
+} else if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && isset($request_vars['id'])) {
 
   try {
     $stmt = $pdo->prepare("DELETE FROM 
       hotel_booking 
     WHERE id = :id"); // OBS: glöm aldrig WHERE i DELETE och UPDATE!!
     
-    $stmt->execute(["id" => $request_vars['id']]);
+    $stmt->execute([":id" => $request_vars['id']]);
     $response = [ "msg" => "DELETED booking " . $request_vars['id']];
 
   } catch (Exception $e) {
     $response = [ "error" => $e ];
   }
   
+} else if ($_SERVER['REQUEST_METHOD'] == 'PUT' && isset($request_vars['id'])) {
+
+  try {
+    $stmt = $pdo->prepare("UPDATE hotel_booking SET 
+
+      guest_id = :guest_id,
+      room_id = :room_id,
+      addinfo = :addinfo,
+      dateto = :datefrom,
+      datefrom = :datefrom
+    WHERE id = :id");
+
+  $stmt->execute([
+    ":guest_id" => $request_body->guest_id,
+    ":room_id" => $request_body->room_id,
+    ":addinfo" => strip_tags($request_body->addinfo),
+    ":datefrom" => $request_body->datefrom,
+    ":id" => $request_vars['id']
+  ]);
+
+  } catch (Exception $e) {
+    $response = [ "error" => $e ];
+  }
+
+  $response = ['Updated rows' => $stmt->rowCount()];
+
+
 }
 
 // Omvandla PHP-arrayen till JSON och skriv ut
